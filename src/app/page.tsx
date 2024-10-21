@@ -29,9 +29,6 @@ export default function MuseClubHomePage() {
     id: number;
     avatarUrl: string;
   };
-  type UserInfoProps = {
-    userInfo: UserInfo;
-  };
 
   const sampleUserInfo: UserInfo = {
     isLoggedIn: false,
