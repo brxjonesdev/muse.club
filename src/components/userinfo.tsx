@@ -1,15 +1,10 @@
-import { Bell, Users, Settings, Music, Plus } from 'lucide-react';
+"use client";
+
+import { useEffect, useState } from 'react';
+import { Music, Plus } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-  CardDescription,
-} from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardFooter, CardContent, CardDescription } from '@/components/ui/card';
 import { FlipWords } from './ui/flip-words';
 import {
   Dialog,
@@ -20,59 +15,123 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import CreatePost from './createpost';
+import Link from 'next/link';
+import { createClient } from '@/utils/supabase/client';
+import SignInButton from './signInBtn';
+import LogoutBtn from './logoutBtn';
 
-type UserInfo = {
-  isLoggedIn: boolean;
-  username?: string;
-  avatarUrl?: string;
-  notifications?: number;
-  friends?: Friend[];
-};
+const words = [
+  'Music is the universal language of mankind. — Henry Wadsworth Longfellow',
+  'Where words fail, music speaks. — Hans Christian Andersen',
+  'Music gives a soul to the universe, wings to the mind, flight to the imagination, and life to everything. — Plato',
+  'Music is the divine way to tell beautiful, poetic things to the heart. — Pablo Casals',
+  'To share your music is to share your soul. — Anonymous',
+];
 
-type Friend = {
-  id: number;
-  avatarUrl: string;
-};
-type UserInfoProps = {
-  userInfo: UserInfo;
-};
+export default function UserInfoCard() {
+  const supabase = createClient();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userInfo, setUserInfo] = useState({
+    name: 'User Name',
+    email: '',
+    profile_photo: '',
+  })
+  
 
-export default function UserInfoCard({ userInfo }: UserInfoProps) {
-  const { isLoggedIn, username, avatarUrl, notifications, friends } = userInfo;
-  const words = [
-    'Music is the universal language of mankind.<br>— Henry Wadsworth Longfellow',
-    'Where words fail, music speaks.<br>— Hans Christian Andersen',
-    'Music gives a soul to the universe, wings to the mind, flight to the imagination, and life to everything.<br>— Plato',
-    'Music is the divine way to tell beautiful, poetic things to the heart.<br>— Pablo Casals',
-    'To share your music is to share your soul.<br>— Anonymous',
-  ];
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setIsLoggedIn(true);
+        setUserInfo({
+          name: user.user_metadata.full_name,
+          email: user.email,
+          profile_photo: user.user_metadata.avatar_url,
+        });
+      }
+    };
+  
+    checkAuth();
+  }, [supabase, supabase.auth]);
+  
+  useEffect(() => {
+    const checkDatabase = async () => {
+      if (!userInfo.email) return; // Ensure email is available before running
+  
+      const { data: users, error } = await supabase.from('users').select('*').eq('email', userInfo.email);
+      if (error) {
+        throw error;
+      }
+      if (users.length === 0) {
+        const { error } = await supabase.from('users').insert([
+          { email: userInfo.email, name: userInfo.name, profile_photo: userInfo.profile_photo }
+        ]);
+        if (error) {
+          throw error;
+        }
+      }
+    };
+  
+    checkDatabase();
+  }, [userInfo.email, supabase, userInfo.name, userInfo.profile_photo]);
+  
+
+  if (!isLoggedIn){
+    return (
+      <div className="min-h-screen xl:flex flex-col w-full max-w-[350px] mt-16 hidden h-[260px] ">
+        <Card className="bg-[#161616] border-none text-app-text">
+          <CardHeader className="">
+           <CardTitle>
+            Welcome to Muse.Club!
+           </CardTitle>
+           <CardDescription>
+            Discover new music and share your favorites
+           </CardDescription>
+          </CardHeader>
+          <CardContent>
+           <SignInButton /> 
+          </CardContent>
+          
+          <div className="mx-6 p-4 text-sm bg-white/10 flex items-center justify-center rounded-lg mb-4">
+            <FlipWords words={words} className="text-white" />
+          </div>
+        </Card>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen xl:flex flex-col w-full max-w-[350px] mt-16 hidden">
+    <div className="min-h-screen xl:flex flex-col w-full max-w-[350px] mt-16 hidden h-[260px] ">
       <Card className="bg-[#161616] border-none text-app-text">
         <CardHeader className="flex flex-row items-center gap-4">
-          {isLoggedIn ? (
-            <>
-              <Avatar className="h-10 w-10">
-                <AvatarImage
-                  alt={`${username}'s profile picture`}
-                  src={avatarUrl || '/placeholder.svg?height=80&width=80'}
-                />
-                <AvatarFallback>{username ? username[0].toUpperCase() : 'UN'}</AvatarFallback>
+        <Avatar className="h-10 w-10">
+                {userInfo.profile_photo ? (
+                  <AvatarImage
+                    alt={`${userInfo.email}'s profile picture`}
+                    src={userInfo.profile_photo}
+                  />
+                ) : (
+                  <AvatarFallback>
+                    {userInfo.name ? userInfo.name[0].toUpperCase() : 'UN'}
+                  </AvatarFallback>
+                )}
               </Avatar>
+
               <div>
-                <CardTitle>{username || 'User Name'}</CardTitle>
-                <p className="text-sm text-muted-foreground">@{username}</p>
+                <CardTitle>{userInfo.name || 'User Name'}</CardTitle>
+                <p className="text-sm text-muted-foreground">
+                  @{userInfo.email ? userInfo.email.replace('@gmail.com', '') : 'unknown'}
+                </p>
               </div>
 
               <Dialog>
                 <DialogTrigger className="ml-auto">
-                  <Music className="w-5 h-5 animate-bounce " />
+                  <Music className="w-5 h-5 animate-bounce" />
                 </DialogTrigger>
                 <DialogContent className="max-w-2xl bg-[#161616] text-gray-100 h-fit flex flex-col border-none p-0">
                   <div className="bg-gradient-to-r from-cyan-400 to-sky-500 min-h-[50px] flex items-center px-6 rounded-t-md">
                     <DialogTitle className="font-bold text-black/70">
-                      Muse.Club, <span className="text-sm"> from brxjonesdev.</span>
+                      Muse.Club, <span className="text-sm">from brxjonesdev.</span>
                     </DialogTitle>
                   </div>
                   <div className="pt-0 p-6 flex flex-col h-full gap-4">
@@ -99,69 +158,19 @@ export default function UserInfoCard({ userInfo }: UserInfoProps) {
                   </div>
                 </DialogContent>
               </Dialog>
-            </>
-          ) : (
-            <div className="space-y-2">
-              <CardTitle className="text-2xl font-bold">Welcome to Muse.Club</CardTitle>
-              <CardDescription>
-                <FlipWords words={words} className="text-white" />
-              </CardDescription>
-            </div>
-          )}
         </CardHeader>
 
-        {isLoggedIn && (
-          <>
-            <div className="mx-6 p-4 text-sm bg-white/10 flex items-center justify-center rounded-lg mb-4">
+        <div className="mx-6 p-4 text-sm bg-white/10 flex items-center justify-center rounded-lg mb-4">
               <FlipWords words={words} className="text-white" />
             </div>
-            <CardContent className="gap-2 flex flex-col">
-              <div className="flex items-center gap-4">
-                <Bell className="h-5 w-5 text-muted-foreground" />
-                <div className="flex-1">Notifications</div>
-                <Badge variant="secondary">{notifications || 0}</Badge>
-              </div>
-              <div className="flex items-center gap-4">
-                <Users className="h-5 w-5 text-muted-foreground" />
-                <div className="flex-1">Friends</div>
-                <div className="flex -space-x-2">
-                  {friends?.slice(0, 4).map((friend, i) => (
-                    <Avatar key={friend.id} className="border-2 border-background h-8 w-8">
-                      <AvatarImage
-                        alt={`Friend ${i + 1}`}
-                        src={
-                          friend.avatarUrl || `/placeholder.svg?height=32&width=32&text=F${i + 1}`
-                        }
-                      />
-                      <AvatarFallback>F{i + 1}</AvatarFallback>
-                    </Avatar>
-                  ))}
-                  {friends && friends.length > 4 && (
-                    <Avatar className="border-2 border-background h-8 w-8">
-                      <AvatarFallback>+{friends.length - 4}</AvatarFallback>
-                    </Avatar>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <Settings className="h-5 w-5 text-muted-foreground" />
-                <div className="flex-1">Settings</div>
-                <Button variant="ghost" size="sm">
-                  Manage
-                </Button>
-              </div>
-            </CardContent>
-          </>
-        )}
 
         <CardFooter>
-          {isLoggedIn ? (
-            <CreatePost/>
-          ) : (
-            <Button className="bg-gradient-to-r from-cyan-400 to-sky-500 text-black font-semibold text-center w-full">
-              Sign In / Sign Up
-            </Button>
-          )}
+        <CreatePost email={userInfo.email}>
+              <Button className="w-full bg-gradient-to-r from-cyan-400 to-sky-500 text-black font-semibold">
+                <Plus className="mr-2" size={24} />
+                Add a Recommendation
+              </Button>
+        </CreatePost>
         </CardFooter>
       </Card>
     </div>

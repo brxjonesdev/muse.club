@@ -7,28 +7,29 @@ import PostDetails from './postdetails';
 import { Dialog } from '@/components/ui/dialog';
 
 type PostProps = {
+  name: string;
   profilePicture: string;
   username: string;
-  timeAgo: string;
-  upvotes: number;
+  postedAt: string;
   videoURL: string;
   videoThumbnail: string;
   songTitle: string;
-  artistName: string;
+  songArtist: string;
   caption: string;
-};
+}
 
 export default function Post({
+  name,
   profilePicture,
   username,
-  timeAgo,
-  upvotes,
+  postedAt,
   videoURL,
   videoThumbnail,
   songTitle,
-  artistName,
+  songArtist,
   caption,
-}: PostProps) {
+
+} : PostProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <>
@@ -42,12 +43,11 @@ export default function Post({
               </Avatar>
               <div>
                 <h3 className="font-semibold">{username}</h3>
-                <p className="text-sm text-gray-400">{timeAgo}</p>
+                <p className="text-sm text-gray-400">
+  {new Date(postedAt).toLocaleString()}
+</p>
+
               </div>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Heart className="w-5 h-5 text-red-500" />
-              <span className="text-sm font-medium text-gray-300">{upvotes}</span>
             </div>
           </div>
         </CardHeader>
@@ -69,7 +69,7 @@ export default function Post({
         </div>
         <CardContent className="p-4">
           <h2 className="text-xl font-bold mb-2">
-            {songTitle} by {artistName}
+            {songTitle} by {songArtist}
           </h2>
           <p className="text-sm text-gray-300">{caption}</p>
         </CardContent>
@@ -77,7 +77,7 @@ export default function Post({
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <PostDetails
           songTitle={songTitle}
-          artistName={artistName}
+          artistName={songArtist}
           videoURL={videoURL}
           caption={caption}
         />

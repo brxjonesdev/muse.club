@@ -2,9 +2,14 @@ import React from 'react';
 import {
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { Youtube } from 'lucide-react';
+import YouTubeEmbed from '../youtubeembed';
+import { DialogClose } from '@radix-ui/react-dialog';
+import { Button } from '../ui/button';
 
 interface PostProps {
   songTitle: string;
@@ -25,13 +30,21 @@ export default function PostDetails({ songTitle, artistName, videoURL, caption }
           <DialogDescription className="text-gray-400">by {artistName}</DialogDescription>
         </DialogHeader>
         <div className="flex-grow">
-          <video className="w-full h-full" controls src={videoURL} />
+          <YouTubeEmbed url={videoURL} />
         </div>
         <div className="flex-grow">
           <h3 className="text-lg font-semibold mb-2">Caption</h3>
           <p className="text-sm text-gray-300">{caption}</p>
         </div>
       </div>
+      <DialogFooter className='px-6 pb-4'>
+        <DialogClose asChild>
+          <Button variant="secondary" className="w-full">
+    
+            Close
+          </Button>
+        </DialogClose>
+      </DialogFooter>
     </DialogContent>
   );
 }
