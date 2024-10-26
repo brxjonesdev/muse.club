@@ -1,10 +1,12 @@
 import type { Metadata } from 'next';
-import { Nunito } from 'next/font/google';
+import { Nunito, Rethink_Sans } from 'next/font/google';
 import './globals.css';
+import { ThemeProvider } from '@/components/ui/theme-provider';
+import { ModeToggle } from '@/components/ui/mode-toggle';
 
-const nunito = Nunito({
+const rethink = Rethink_Sans({
   subsets: ['latin'],
-  variable: '--font-nunito',
+  variable: '--font-rethink',
 });
 export const metadata: Metadata = {
   title: 'MuseClub',
@@ -19,9 +21,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${nunito.variable} antialiased bg-app-background text-app-text min-h-dvh font-nunito flex flex-col items-center `}
+        className={`${rethink.variable} antialiased  min-h-dvh font-rethink flex flex-col items-center bg-background `}
       >
-        {children}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

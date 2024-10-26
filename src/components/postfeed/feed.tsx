@@ -6,9 +6,7 @@ import { createClient } from '@/utils/supabase/server';
 export default async function Feed() {
   const supabase = createClient();
   async function getFeed() {
-    const { data: feed, error } = await supabase
-  .from('recommendations')
-  .select(`
+    const { data: feed, error } = await supabase.from('recommendations').select(`
     *,
     users (
       name,
@@ -19,7 +17,7 @@ export default async function Feed() {
     if (error) {
       throw error;
     }
-   return feed;
+    return feed;
   }
 
   const feed = await getFeed();
@@ -35,10 +33,5 @@ export default async function Feed() {
     );
   });
 
-  return (
-    <div className="min-h-screen flex flex-col w-full max-w-2xl overflow-y-auto min-w-[400px]">
-      <FeedHeader posts={postsToday.length} />
-      <Posts feed={feed} />
-    </div>
-  );
+  return <Posts feed={feed} />;
 }

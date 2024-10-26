@@ -16,7 +16,7 @@ type PostProps = {
   songTitle: string;
   songArtist: string;
   caption: string;
-}
+};
 
 export default function Post({
   name,
@@ -28,12 +28,11 @@ export default function Post({
   songTitle,
   songArtist,
   caption,
-
-} : PostProps) {
+}: PostProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <>
-      <Card className="w-full  bg-[#161616] text-gray-100 border-none">
+      <Card className="w-full">
         <CardHeader className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -43,18 +42,18 @@ export default function Post({
               </Avatar>
               <div>
                 <h3 className="font-semibold">{username}</h3>
-                <p className="text-sm text-gray-400">
-  {new Date(postedAt).toLocaleString()}
-</p>
-
+                <p className="text-sm text-gray-400">{new Date(postedAt).toLocaleString()}</p>
               </div>
             </div>
           </div>
         </CardHeader>
-        <div className="relative aspect-video cursor-pointer" onClick={() => setIsModalOpen(true)}>
+        <div
+          className="relative aspect-video cursor-pointer p-2"
+          onClick={() => setIsModalOpen(true)}
+        >
           <img
             alt="Video thumbnail"
-            className="object-cover w-full h-full"
+            className="object-cover w-full h-full rounded-md"
             height="225"
             src={videoThumbnail}
             style={{
@@ -63,15 +62,18 @@ export default function Post({
             }}
             width="400"
           />
-          <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30 bg-opacity-50">
             <Play className="w-16 h-16 text-white" />
           </div>
         </div>
         <CardContent className="p-4">
-          <h2 className="text-xl font-bold mb-2">
+          <h2 className=" md:text-xl font-bold mb-2">
             {songTitle} by {songArtist}
           </h2>
-          <p className="text-sm text-gray-300">{caption}</p>
+          <div className="space-y-1">
+            <h3 className="font-semibold">About this song:</h3>
+            <p className="text-gray-600 text-sm">{caption}</p>
+          </div>
         </CardContent>
       </Card>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>

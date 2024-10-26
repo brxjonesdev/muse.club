@@ -2,8 +2,8 @@ import React from 'react';
 
 export default function FeedHeader({ posts }: { posts: number }) {
   return (
-    <header className="bg-gradient-to-r from-cyan-400 to-sky-500  text-black tracking-tight min-h-[275px] flex  w-full rounded-b-xl">
-      <div className="max-w-2xl w-full fixed top-0 bg-gradient-to-r from-cyan-400 to-sky-500 text-black border-b-[1.75px] border-black px-4 py-2 z-10 ">
+    <header className="bg-gradient-to-r from-blue-200 to-cyan-200   text-black tracking-tight min-h-[275px] flex  w-full rounded-b-xl">
+      <div className="max-w-2xl w-full fixed top-0 bg-gradient-to-r from-blue-200 to-cyan-200  text-black border-b-[1.75px] border-black px-4 py-2 z-10 ">
         <h1 className="text-xl font-bold">
           {new Date().toLocaleDateString('en-US', {
             month: 'long',

@@ -7,7 +7,8 @@ interface YouTubeEmbedProps {
 const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({ url }) => {
   // Function to extract the video ID from the YouTube URL
   const getVideoID = (url: string): string | null => {
-    const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^&\n]{11})/;
+    const regex =
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^&\n]{11})/;
     const matches = url.match(regex);
     return matches ? matches[1] : null;
   };
@@ -21,9 +22,9 @@ const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({ url }) => {
   const embedUrl = `https://www.youtube.com/embed/${videoID}`;
 
   return (
-    <div className="p-2 bg-gradient-to-r from-cyan-800 to-sky-900 rounded">
+    <div className="p-2 bg-white/10 rounded">
       <iframe
-        className='w-full'
+        className="w-full rounded-xl"
         height="315"
         src={embedUrl}
         title="YouTube video player"
