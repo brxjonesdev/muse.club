@@ -1,28 +1,7 @@
 import React from 'react';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-    Accordion,
-    AccordionContent,
-    AccordionItem,
-    AccordionTrigger,
-  } from "@/components/ui/accordion"
-import { ArrowLeft } from 'lucide-react';
+import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import LeftColumn from '@/components/profile/left-column';
 import RightColumn from '@/components/profile/right-column';
-  
-
 
 export default function Settings() {
   return (
@@ -35,8 +14,8 @@ export default function Settings() {
         </Card>
       </section>
       <section className="w-full  px-4  flex  gap-4  flex-col md:flex-row overflow-y-scroll ">
-      <LeftColumn/>
-      <RightColumn/>
+        <LeftColumn />
+        <RightColumn />
       </section>
     </main>
   );

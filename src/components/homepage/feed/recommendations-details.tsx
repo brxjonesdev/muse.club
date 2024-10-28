@@ -6,21 +6,28 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Youtube } from 'lucide-react';
-import YouTubeEmbed from '../youtubeembed';
+import YouTubeEmbed from './youtube-embed';
 import { DialogClose } from '@radix-ui/react-dialog';
-import { Button } from '../ui/button';
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-
+import { Button } from '../../ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface PostProps {
   songTitle: string;
   artistName: string;
   videoURL: string;
   caption: string;
+  posterName: string;
+  posterProfilePicture: string;
 }
 
-export default function PostDetails({ songTitle, artistName, videoURL, caption }: PostProps) {
+export default function RecommendationsDetails({
+  songTitle,
+  artistName,
+  videoURL,
+  caption,
+  posterName,
+  posterProfilePicture,
+}: PostProps) {
   return (
     <DialogContent className="max-w-2xl p-0">
       <div className="bg-gradient-to-r from-blue-200 to-cyan-200  min-h-[50px] flex items-center px-6 rounded-t-md">
@@ -34,14 +41,13 @@ export default function PostDetails({ songTitle, artistName, videoURL, caption }
         <div className="flex-grow">
           <YouTubeEmbed url={videoURL} />
         </div>
-        <div className='flex  text-xs font-bold items-center gap-1'>
+        <div className="flex  text-xs font-bold items-center gap-1">
           <p>Reccomended By:</p>
-          <Avatar className='w-5 h-5'>
-  <AvatarImage src="https://github.com/shadcn.png"  />
-  <AvatarFallback>CN</AvatarFallback>
-</Avatar>
-<p>Bae Joo-hyun</p>
-
+          <Avatar className="w-5 h-5">
+            <AvatarImage src={posterProfilePicture} />
+            <AvatarFallback>{posterName[0]}</AvatarFallback>
+          </Avatar>
+          <p>{posterName}</p>
         </div>
         <div className="flex-grow">
           <h3 className="text-lg font-semibold mb-2">About this song</h3>

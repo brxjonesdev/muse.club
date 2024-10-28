@@ -1,16 +1,16 @@
 import type { Metadata } from 'next';
-import { Nunito, Rethink_Sans } from 'next/font/google';
+import { Rethink_Sans } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/ui/theme-provider';
-import { ModeToggle } from '@/components/ui/mode-toggle';
+import { AppStoreProvider } from '@/providers/app-store-provider';
 
 const rethink = Rethink_Sans({
   subsets: ['latin'],
   variable: '--font-rethink',
 });
 export const metadata: Metadata = {
-  title: 'MuseClub',
-  description: 'MuseClub is a platform for people to share music with each other.',
+  title: 'Harmoniq',
+  description: 'Harmoniq is a platform for people to share music with each other.',
 };
 
 export default function RootLayout({
@@ -29,7 +29,7 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <AppStoreProvider>{children}</AppStoreProvider>
         </ThemeProvider>
       </body>
     </html>

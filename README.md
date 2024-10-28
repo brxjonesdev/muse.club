@@ -1,5 +1,5 @@
-# CheckIn
-- Post Flow
-- Profile Sections
-- Refcator
-- Realtime DB Check
+# Last Steps
+
+- Add Supabase back in
+- Finish CRUD
+- Infinite Scrolling
