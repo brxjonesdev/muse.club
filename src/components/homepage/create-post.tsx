@@ -4,9 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
-  DialogClose,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -16,16 +14,11 @@ import { Label } from '@/components/ui/label';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
 import { Separator } from '../ui/separator';
+import { useAppStore } from '@/providers/app-store-provider';
 
-export default function CreatePost({
-  children,
-  email,
-}: {
-  children: React.ReactNode;
-  email: string;
-}) {
+export default function CreatePost({ children }: { children: React.ReactNode; email: string }) {
+  const { userID, addRecommendation } = useAppStore((state) => state);
   const supabase = createClient();
-  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [youtubeLink, setYoutubeLink] = useState('');
   const [videoDetails, setVideoDetails] = useState({
@@ -70,30 +63,34 @@ export default function CreatePost({
     e.preventDefault();
 
     const songData = {
+      created_at: new Date().toISOString(),
+      // likes: 0,
       youtube_url: youtubeLink,
       youtube_thumbnail: videoDetails.thumbnail,
       song_title: videoDetails.songName,
       song_artist: videoDetails.songArtist,
       user_caption: videoDetails.caption,
-      user: email,
+      poster: userID,
     };
+    // check if all fields are filled
+    if (
+      !songData.youtube_url ||
+      !songData.song_title ||
+      !songData.song_artist ||
+      !songData.user_caption
+    ) {
+      alert('Please fill all fields');
+      return;
+    }
 
     console.log(songData);
 
-    const { data, error } = await supabase.from('recommendations').insert({
-      youtube_thumbnail: songData.youtube_thumbnail,
-      youtube_url: songData.youtube_url,
-      song_title: songData.song_title,
-      song_artist: songData.song_artist,
-      user_caption: songData.user_caption,
-      user: songData.user,
-    });
+    const { error } = await supabase.from('recommendations').insert([songData]);
     if (error) {
-      console.error('Error inserting song:', error);
-      return;
+      console.error('Error adding song recommendation:', error);
     } else {
       setOpen(false);
-      router.refresh();
+      addRecommendation(songData);
     }
   };
 
@@ -119,9 +116,8 @@ export default function CreatePost({
         {children}
       </DialogTrigger>
 
-      <DialogContent className="p-3 max-h-[90%] overflow-y-scroll">
-        <DialogHeader className="p-0 space-y-4">
-          <div className="h-[100px] bg-gradient-to-r from-blue-200 to-cyan-200 rounded-md " />
+      <DialogContent className="p-4 max-h-[90%] overflow-y-scroll">
+        <DialogHeader className="p-2 space-y-4">
           <DialogTitle>Reccomend a Song</DialogTitle>
           <Separator />
           {!videoDetails.thumbnail ? (
@@ -194,6 +190,7 @@ export default function CreatePost({
             </>
           )}
         </DialogHeader>
+        <div className="h-[10px] bg-gradient-to-r from-blue-200 to-cyan-200 rounded-md " />
       </DialogContent>
     </Dialog>
   );

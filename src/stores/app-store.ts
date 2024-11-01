@@ -2,7 +2,6 @@
 import { createStore } from 'zustand/vanilla';
 import { createClient } from '@/utils/supabase/client';
 
-
 export type Recommendation = {
   id: string;
   created_at: string; // ISO 8601 date string
@@ -11,15 +10,9 @@ export type Recommendation = {
   song_artist: string;
   song_title: string;
   user_caption: string;
-  user: string; // Email of the user
-  poster_info: {
-    userID: number;
-    username: string;
-    profileImage: string;
-  };
-  likes: Likes[]; // Array of likes
+  poster: string; // ID of the user
+  likes: Likes[];
 };
-
 
 export type Likes = {
   userID: string;
@@ -67,14 +60,20 @@ export const createAppStore = (initState: AppState = defaultInitState) => {
 
     // Actions
     fetchRecommndationTotal: async () => {
-    //   const { count } = await supabase
-    // .from('recommendations')
-    // .select('*', { count: 'exact' });
+      try {
+        const supabase = await createClient();
+        const response = await supabase.from('recommendations').select('id');
+        set({ totalRecommendations: response.data ? response.data.length : 0 });
+      } catch (error) {
+        console.error('Error fetching total recommendations', error);
+      }
     },
     setUserID: (userID) => set({ userID }),
     addRecommendation: (recommendation) =>
       set((state) => ({
-        recommendations: state.recommendations ? [...state.recommendations, recommendation] : [recommendation],
+        recommendations: state.recommendations
+          ? [...state.recommendations, recommendation]
+          : [recommendation],
         totalRecommendations: state.totalRecommendations + 1,
       })),
     editRecommendation: (id, updatedRecommendation) =>
@@ -88,12 +87,16 @@ export const createAppStore = (initState: AppState = defaultInitState) => {
       }),
     deleteRecommendation: (id) =>
       set((state) => {
-        const recommendations = state.recommendations ? state.recommendations.filter((rec) => rec.id !== id) : [];
+        const recommendations = state.recommendations
+          ? state.recommendations.filter((rec) => rec.id !== id)
+          : [];
         return { recommendations, totalRecommendations: state.totalRecommendations - 1 };
       }),
     likeRecommendation: (userID, recommendationID) =>
       set((state) => {
-        const recommendation = state.recommendations ? state.recommendations.find((rec) => rec.id === recommendationID) : null;
+        const recommendation = state.recommendations
+          ? state.recommendations.find((rec) => rec.id === recommendationID)
+          : null;
         if (recommendation && !recommendation.likes.some((like) => like.userID === userID)) {
           recommendation.likes.push({ userID, recommendationID });
         }
@@ -101,12 +104,14 @@ export const createAppStore = (initState: AppState = defaultInitState) => {
       }),
     unlikeRecommendation: (userID, recommendationID) =>
       set((state) => {
-        const recommendation = state.recommendations ? state.recommendations.find((rec) => rec.id === recommendationID) : null;
+        const recommendation = state.recommendations
+          ? state.recommendations.find((rec) => rec.id === recommendationID)
+          : null;
         if (recommendation) {
           recommendation.likes = recommendation.likes.filter((like) => like.userID !== userID);
         }
         return { recommendations: state.recommendations ? [...state.recommendations] : [] };
-q      }),
+      }),
     fetchRecommendations: async () => {
       set({ feedStatus: { loading: true, error: null } }); // Start loading
       try {

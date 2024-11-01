@@ -4,16 +4,23 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/ca
 import { useAppStore } from '@/providers/app-store-provider';
 
 export default function AccentHeader() {
-  const { totalRecommendations } = useAppStore((state) => state);
+  const { totalRecommendations, fetchRecommndationTotal } = useAppStore((state) => state);
   const today = new Date();
+
+  React.useEffect(() => {
+    fetchRecommndationTotal();
+  }, [fetchRecommndationTotal]);
   return (
-    <Card className=" rounded-none rounded-b-lg min-h-[150px] md:min-h-[300px] flex flex-col  items-start  justify-end  bg-gradient-to-r from-blue-200 to-cyan-200 "  suppressHydrationWarning>
+    <Card
+      className=" rounded-none rounded-b-lg min-h-[150px] md:min-h-[300px] flex flex-col  items-start  justify-end  bg-gradient-to-r from-blue-200 to-cyan-200 "
+      suppressHydrationWarning
+    >
       <CardHeader className="pb-3">
         <CardTitle className="text-md lg:text-lg text-black">
           Welcome to <br />
           <span className="text-5xl lg:text-6xl font-bold">Harmoniq</span>
         </CardTitle>
-        <CardDescription className="text-black/70 font-bold"  >
+        <CardDescription className="text-black/70 font-bold">
           {today.toLocaleDateString('en-US', {
             weekday: 'long',
             year: 'numeric',

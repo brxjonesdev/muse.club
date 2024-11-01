@@ -7,22 +7,17 @@ import { Button } from '@/components/ui/button';
 import CreatePost from '@/components/homepage/create-post';
 import { useAppStore } from '@/providers/app-store-provider';
 import { createClient } from '@/utils/supabase/client';
+import { useRouter } from 'next/navigation';
 
-export default function UserActionBar() {
+export default function ProfileCard() {
+  const router = useRouter();
   const { setUserID } = useAppStore((state) => state);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
   const [fullName, setFullName] = React.useState('');
   const [profileImage, setProfileImage] = React.useState('');
   const supabase = createClient();
 
-  const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-    });
-    if (error) {
-      console.error('Error logging in:', error);
-    }
-  };
+ 
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -32,6 +27,7 @@ export default function UserActionBar() {
       setIsLoggedIn(false);
       setFullName('');
       setProfileImage('');
+      router.push('/');
     }
   };
 
@@ -80,11 +76,17 @@ export default function UserActionBar() {
 
   if (!isLoggedIn) {
     return (
-      <>
-        <Button onClick={handleLogin} className="w-full" variant={'outline'}>
-          Login
-        </Button>
-      </>
+      <div className="h-fit flex items-center justify-center animate-pulse">
+      <div className="flex flex-row items-center gap-4 p-2 md:px-4 w-full">
+        <div className="h-10 w-10 rounded-full bg-gray-200"></div>
+        <div className="space-y-2">
+          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+          <div className="flex gap-2">
+            <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+          </div>
+        </div>
+      </div>
+    </div>
     );
   }
 
@@ -93,7 +95,7 @@ export default function UserActionBar() {
       <CardHeader className="flex flex-row items-center gap-4 p-2 md:px-4 w-full">
         <div>
           {profileImage && (
-            <Avatar className="w-12 h-12">
+            <Avatar className="w-10 h-10">
               <AvatarImage src={profileImage} />
               <AvatarFallback>{fullName[0]}</AvatarFallback>
             </Avatar>
@@ -102,20 +104,12 @@ export default function UserActionBar() {
         <div className="space-y-2">
           <CardTitle>{fullName}</CardTitle>
           <div className="flex gap-2">
-            <Link href="/user/userIDGOESHERE">
-              <CardDescription className="hover:underline">View Profile</CardDescription>
-            </Link>
             <CardDescription onClick={handleLogout} className="hover:underline cursor-pointer">
               Logout
             </CardDescription>
           </div>
         </div>
       </CardHeader>
-      <CardContent className="gap-4 flex justify-center  p-2 items-center md:w-full">
-        <CreatePost>
-          <Button className="w-full ">Post a song</Button>
-        </CreatePost>
-      </CardContent>
     </Card>
   );
 }

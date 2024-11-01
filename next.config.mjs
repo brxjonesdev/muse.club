@@ -1,15 +1,8 @@
-// next.config.mjs
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  images: {
+    domains: ['i.ytimg.com'],
+  },
+};
 
-export default {
-    images: {
-      remotePatterns: [
-        {
-          protocol: 'https',
-          hostname: 'www.billboard.com',
-          port: '',
-          pathname: '/**', // This allows all paths under the domain
-        },
-      ],
-    },
-  };
-  
+export default nextConfig;
