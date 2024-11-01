@@ -11,8 +11,7 @@ export type Recommendation = {
   song_title: string;
   user_caption: string;
   poster: string; // ID of the user
-  likes: Likes[];
-};
+ };
 
 export type Likes = {
   userID: string;
@@ -33,8 +32,8 @@ export type AppActions = {
   addRecommendation: (recommendation: Recommendation) => void;
   editRecommendation: (id: string, updatedRecommendation: Partial<Recommendation>) => void;
   deleteRecommendation: (id: string) => void;
-  likeRecommendation: (userID: string, recommendationID: string) => void;
-  unlikeRecommendation: (userID: string, recommendationID: string) => void;
+  // likeRecommendation: (userID: string, recommendationID: string) => void;
+  // unlikeRecommendation: (userID: string, recommendationID: string) => void;
   fetchRecommendations: () => Promise<void>; // Declare fetchRecommendations in actions
   setUserID: (userID: string) => void; // Added setUserID action
   fetchRecommndationTotal: () => Promise<void>; // Added fetchRecommndationTotal action
@@ -92,26 +91,7 @@ export const createAppStore = (initState: AppState = defaultInitState) => {
           : [];
         return { recommendations, totalRecommendations: state.totalRecommendations - 1 };
       }),
-    likeRecommendation: (userID, recommendationID) =>
-      set((state) => {
-        const recommendation = state.recommendations
-          ? state.recommendations.find((rec) => rec.id === recommendationID)
-          : null;
-        if (recommendation && !recommendation.likes.some((like) => like.userID === userID)) {
-          recommendation.likes.push({ userID, recommendationID });
-        }
-        return { recommendations: state.recommendations ? [...state.recommendations] : [] };
-      }),
-    unlikeRecommendation: (userID, recommendationID) =>
-      set((state) => {
-        const recommendation = state.recommendations
-          ? state.recommendations.find((rec) => rec.id === recommendationID)
-          : null;
-        if (recommendation) {
-          recommendation.likes = recommendation.likes.filter((like) => like.userID !== userID);
-        }
-        return { recommendations: state.recommendations ? [...state.recommendations] : [] };
-      }),
+   
     fetchRecommendations: async () => {
       set({ feedStatus: { loading: true, error: null } }); // Start loading
       try {

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -7,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import CreatePost from '@/components/homepage/create-post';
 import { useAppStore } from '@/providers/app-store-provider';
 import { createClient } from '@/utils/supabase/client';
+import { User } from '@supabase/supabase-js';
 
 export default function UserActionBar() {
   const { setUserID } = useAppStore((state) => state);
@@ -35,7 +37,7 @@ export default function UserActionBar() {
     }
   };
 
-  const checkUserInDatabase = async (user) => {
+  const checkUserInDatabase = async (user: User) => {
     // we will check if there is a user in the database
     const { data, error } = await supabase.from('users').select().eq('user_id', user.id);
     if (error) {

@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useState } from 'react';
@@ -12,11 +13,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { createClient } from '@/utils/supabase/client';
-import { useRouter } from 'next/navigation';
 import { Separator } from '../ui/separator';
 import { useAppStore } from '@/providers/app-store-provider';
 
-export default function CreatePost({ children }: { children: React.ReactNode; email: string }) {
+export default function CreatePost({ children }: { children: React.ReactNode}) {
   const { userID, addRecommendation } = useAppStore((state) => state);
   const supabase = createClient();
   const [open, setOpen] = useState(false);
@@ -63,8 +63,9 @@ export default function CreatePost({ children }: { children: React.ReactNode; em
     e.preventDefault();
 
     const songData = {
+      id: '', // Add a unique ID here if necessary
       created_at: new Date().toISOString(),
-      // likes: 0,
+      likes: "0",
       youtube_url: youtubeLink,
       youtube_thumbnail: videoDetails.thumbnail,
       song_title: videoDetails.songName,

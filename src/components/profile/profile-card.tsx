@@ -1,13 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 'use client';
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import Link from 'next/link';
+import { Card , CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import CreatePost from '@/components/homepage/create-post';
 import { useAppStore } from '@/providers/app-store-provider';
 import { createClient } from '@/utils/supabase/client';
 import { useRouter } from 'next/navigation';
+import { User } from '@supabase/supabase-js';
 
 export default function ProfileCard() {
   const router = useRouter();
@@ -31,7 +30,7 @@ export default function ProfileCard() {
     }
   };
 
-  const checkUserInDatabase = async (user) => {
+  const checkUserInDatabase = async (user: User) => {
     // we will check if there is a user in the database
     const { data, error } = await supabase.from('users').select().eq('user_id', user.id);
     if (error) {
